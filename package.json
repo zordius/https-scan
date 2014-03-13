@@ -1,0 +1,30 @@
+{
+  "name": "https-scan",
+  "version": "0.0.1",
+  "description": "A https validation tool based on phantomjs",
+  "author": "Zordius <zordius@yahoo-inc.com>",
+  "keywords": ["https", "phantomjs", "validation", "SSL"],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zordius/https-scan.git"
+  },
+  "dependencies": {},
+  "bin": {
+    "https-scan": "./bin/https-scan"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "main": "./lib/https-scan.js",
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": ">=0.4.12"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/zordius/https-scan/blob/master/LICENSE"
+    }
+  ]
+}
