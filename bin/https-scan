@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+var scan = require('../lib/https-scan'),
+    proc = require('child_process'),
+    path = require('path');
+
+
+proc.execFile(require('phantomjs').path, path.join(__dirname, '../lib/run.js'), function(err, stdout, stderr) {
+    console.log(stdout);
+});
