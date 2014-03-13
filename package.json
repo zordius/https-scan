@@ -16,15 +16,21 @@
     "lib": "./lib"
   },
   "main": "./lib/https-scan.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "jsonlint": "1.6.0",
+    "jshint": "2.4.4"
+  },
   "optionalDependencies": {},
   "engines": {
     "node": ">=0.4.12"
   },
+  "bugs": {
+    "url": "https://github.com/zordius/https-scan/issues"
+  },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/zordius/https-scan/blob/master/LICENSE"
+      "url": "https://github.com/zordius/https-scan/blob/master/LICENSE.txt"
     }
   ]
 }
