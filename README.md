@@ -45,6 +45,18 @@ Show me more testing detail.
 https-scan --file url_list_file --verbose
 ```
 
+Lower the concurrent level to 1 (test 1 after 1) .
+
+```
+https-scan --fil  url_list_file --verbose --queue 1
+```
+
+Do crazy concourrent scan (May drain lots of memory) .
+
+```
+https-scan --fil  url_list_file --verbose --queue 999
+```
+
 Show options.
 
 ```
