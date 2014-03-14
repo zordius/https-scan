@@ -87,7 +87,7 @@ urls.forEach(function (U) {
             data = JSON.parse(stdout);
 
         opts.verbose && console.log('- ' + U);
-        opts.debug && consoole.log(data);
+        opts.debug && console.log(data);
 
         resp[U].out.push(stdout);
         resp[U].bad = resp[U].bad.concat(data.bad);
