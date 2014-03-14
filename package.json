@@ -1,7 +1,7 @@
 {
   "name": "https-scan",
   "version": "0.0.3",
-  "description": "A https validation tool based on phantomjs",
+  "description": "A https validation tool based on phantomjs. It can detect more dynamic loaded resources than static HTML analyze.",
   "author": "Zordius <zordius@yahoo-inc.com>",
   "keywords": [
     "https",
@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "phantomjs": "~1.9.7-1",
-    "nopt": "~2.2.0"
+    "nopt": "~2.2.0",
+    "async": "~0.2.10"
   },
   "bin": {
     "https-scan": "./bin/https-scan"

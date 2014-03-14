@@ -1,7 +1,7 @@
 https-scan
 ==========
 
-A https validation tool based on phantomjs.
+A https validation tool based on phantomjs. It can detect more dynamic loaded resources than static HTML analyze.
 
 Install
 -------
