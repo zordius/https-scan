@@ -70,11 +70,13 @@ var exec = require('child_process').exec,
             return next();
         }
     
-        exec(cmd + U, function(err, stdout, stderr) {
-            var data = null;
+        exec(cmd + "'" + U + "'", function(err, stdout, stderr) {
+            var data = null,
+                M = stdout.match(/([\s\S]*)HTTPS-SCAN-RESULT>>>([\s\S]+)/);
 
             try {
-                data = JSON.parse(stdout);
+                resp[U].err.push(M[0]);
+                data = JSON.parse(M[2]);
             } catch (e) {
                 if (resp[U].stats) {
                     return;
