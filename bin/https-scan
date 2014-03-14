@@ -1,10 +1,71 @@
 #!/usr/bin/env node
 
 var exec = require('child_process').exec,
-    path = require('path');
+    fs = require('fs'),
+    path = require('path'),
+    optcfg = {
+        verbose: Boolean,
+        file: String
+    },
+    opts = require('nopt')(optcfg),
+    urls = opts.argv.remain,
+    all = 0,
+    cmd = require('phantomjs').path + ' ' + path.join(__dirname, '../lib/https-scan.js '),
+    resp = {
+    },
 
-exec(require('phantomjs').path + ' ' + path.join(__dirname, '../lib/https-scan.js ' + process.argv[2]), function(err, stdout, stderr) {
-    console.log(err);
-    console.log(stdout);
-    console.log(stderr);
+    die = function (W) {
+        W && console.warn(W);
+        console.warn('Usage: ' + process.argv[1] + ' [--' + Object.keys(optcfg).join('] [--') + '] [--] <url>...');
+        process.exit(1);
+    },
+
+    done = function () {
+        if (all == urls.length) {
+            process.exit();
+        }
+    };
+
+if (opts.file) {
+    try {
+        urls = urls.concat(fs.readFileSync(opts.file, 'utf8').split(/[\r\n]+/));
+    } catch (e) {
+        die(e);
+    }
+}
+
+opts.argv.remain.length || urls.length || die();
+
+console.log('** All ' + urls.length + ' urls will be tested.');
+
+urls.forEach(function (U) {
+    if (resp[U]) {
+        resp[U].err.push('Duplicate testing targets!');
+        return done();
+    }
+
+    resp[U] = {err: [], out: [], good: [], bad: []};
+
+    if (!U.match(/^https/)) {
+        resp[U].err.push('Testing on bad url or not https');
+        return done();
+    }
+
+    exec(cmd + U, function(err, stdout, stderr) {
+        var match;
+
+        resp[U].out.push(stdout);
+        match = stdout.match(/good:(.+)/g);
+        if (match) {
+            match.forEach(function(M) {
+                console.log('OK?!' + M + '?!');
+            });
+        }
+// = resp[U].good.concat(.push(stdout);
+            
+        
+        opts.verbose && console.log(stdout);
+        console.log(stderr);
+    });
 });
+
