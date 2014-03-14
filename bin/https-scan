@@ -25,6 +25,7 @@ var exec = require('child_process').exec,
         var err = 0,
             scan = 0,
             res = 0,
+            bad = [],
             dead = [];
 
         all++;
@@ -39,6 +40,7 @@ var exec = require('child_process').exec,
 
         Object.keys(resp).forEach(function (U) {
             if (resp[U].bad.length) {
+                bad.push(U);
                 err += resp[U].bad.length;
                 console.log('## Found ' + resp[U].bad.length + ' bad resources in ' + U);
                 console.log(resp[U].bad);
@@ -53,7 +55,8 @@ var exec = require('child_process').exec,
             console.log(dead);
         }
 
-        console.log('### All ' + err + ' bad resources found!!');
+        console.log('### All ' + err + ' bad resources be found in ' + bad.length + ' urls !!');
+        bad.length && console.log(bad);
         process.exit(err);
     };
 
