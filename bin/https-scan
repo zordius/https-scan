@@ -55,17 +55,23 @@ urls.forEach(function (U) {
         var match;
 
         resp[U].out.push(stdout);
+
         match = stdout.match(/good:(.+)/g);
         if (match) {
             match.forEach(function(M) {
-                console.log('OK?!' + M + '?!');
+                resp[U].good.push(M[1]);
             });
         }
-// = resp[U].good.concat(.push(stdout);
-            
         
+        match = stdout.match(/BAD :(.+)/g);
+        if (match) {
+            match.forEach(function(M) {
+                resp[U].bad.push(M[1]);
+            });
+        }
+
         opts.verbose && console.log(stdout);
-        console.log(stderr);
+        console.log(resp[U]);
     });
 });
 
