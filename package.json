@@ -1,6 +1,6 @@
 {
   "name": "https-scan",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A https validation tool based on phantomjs",
   "author": "Zordius <zordius@yahoo-inc.com>",
   "keywords": [
