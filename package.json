@@ -3,12 +3,19 @@
   "version": "0.0.1",
   "description": "A https validation tool based on phantomjs",
   "author": "Zordius <zordius@yahoo-inc.com>",
-  "keywords": ["https", "phantomjs", "validation", "SSL"],
+  "keywords": [
+    "https",
+    "phantomjs",
+    "validation",
+    "SSL"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/zordius/https-scan.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "phantomjs": "~1.9.7-1"
+  },
   "bin": {
     "https-scan": "./bin/https-scan"
   },
