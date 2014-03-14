@@ -58,7 +58,7 @@ var exec = require('child_process').exec,
     },
 
     test = function (U, next) {
-        if (resp[U]) {
+        if (resp[U] && resp[U].good && resp[U].good.length) {
             resp[U].err.push('Duplicate testing targets!');
             return next();
         }
@@ -88,7 +88,7 @@ var exec = require('child_process').exec,
                 }
             }
     
-            opts.verbose && console.log('- ' + (resp[U].stats ? '(retry)' : ('(' + data.stats + ') ')) + U);
+            opts.verbose && console.log('- ' + (resp[U].stats ? '(retry) ' : ('(' + data.stats + ') ')) + U);
             opts.debug && console.log(data);
     
             resp[U].out.push(stdout);
