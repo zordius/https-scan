@@ -3,16 +3,15 @@
 var exec = require('child_process').exec,
     fs = require('fs'),
     path = require('path'),
-    aysnc = require('async'),
+    async = require('async'),
     optcfg = {
         verbose: Boolean,
         debug: Boolean,
         file: String,
-        queue: Boolean
+        queue: Number
     },
     opts = require('nopt')(optcfg),
     urls = opts.argv.remain,
-    all = 0,
     cmd = require('phantomjs').path + ' ' + path.join(__dirname, '../lib/https-scan.js '),
     resp = {
     },
@@ -29,12 +28,6 @@ var exec = require('child_process').exec,
             res = 0,
             bad = [],
             dead = [];
-
-        all++;
-
-        if (all !== urls.length) {
-            return;
-        }
 
         if (opts.debug) {
             console.log(resp);
@@ -62,17 +55,17 @@ var exec = require('child_process').exec,
         process.exit(err);
     },
 
-    test = function (U) {
+    test = function (U, next) {
         if (resp[U]) {
             resp[U].err.push('Duplicate testing targets!');
-            return done();
+            return next();
         }
     
         resp[U] = {err: [], out: [], good: [], bad: []};
     
         if (!U.match(/^https/)) {
             resp[U].err.push('Testing on bad url or not https');
-            return done();
+            return next();
         }
     
         exec(cmd + U, function(err, stdout, stderr) {
@@ -87,9 +80,11 @@ var exec = require('child_process').exec,
             resp[U].good = resp[U].bad.concat(data.good);
             resp[U].stats = data.stats;
     
-            done();
+            next();
         });
-    };
+    },
+
+    queue = async.queue(test, opts.queue || 10);
 
 if (opts.file) {
     try {
@@ -103,4 +98,5 @@ opts.argv.remain.length || urls.length || die();
 
 console.log('** All ' + urls.length + ' urls will be tested.');
 
-urls.forEach(test);
+queue.drain = done;
+queue.push(urls);
