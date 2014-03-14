@@ -5,10 +5,11 @@ var exec = require('child_process').exec,
     path = require('path'),
     async = require('async'),
     optcfg = {
+        slient: Boolean,
         verbose: Boolean,
         debug: Boolean,
         file: String,
-        queue: Number,
+        concurrent: Number,
         retry: Boolean
     },
     opts = require('nopt')(optcfg),
@@ -39,7 +40,7 @@ var exec = require('child_process').exec,
                 bad.push(U);
                 err += resp[U].bad.length;
                 console.log('## Found ' + resp[U].bad.length + ' bad resources in ' + U);
-                console.log(resp[U].bad);
+                opts.verbose && console.log(resp[U].bad);
             }
 
             if (resp[U].stats !== 'success') {
@@ -90,8 +91,7 @@ var exec = require('child_process').exec,
                 }
             }
     
-            opts.verbose && console.log('- ' + (resp[U].stats ? '(retry) ' : ('(' + data.stats + ') ')) + U);
-            opts.debug && console.log(data);
+            opts.slient || console.log('- ' + (resp[U].stats ? '(retry) ' : ('(' + data.stats + ') ')) + U);
     
             resp[U].out.push(stdout);
 
@@ -105,7 +105,7 @@ var exec = require('child_process').exec,
         });
     },
 
-    queue = async.queue(test, opts.queue || 10);
+    queue = async.queue(test, opts.concurrent || 10);
 
 if (opts.file) {
     try {
