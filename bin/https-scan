@@ -22,7 +22,11 @@ var exec = require('child_process').exec,
     },
 
     done = function () {
-        var err = 0;
+        var err = 0,
+            scan = 0,
+            res = 0,
+            dead = [];
+
         all++;
 
         if (all !== urls.length) {
@@ -30,7 +34,7 @@ var exec = require('child_process').exec,
         }
 
         if (opts.debug) {
-            console.warn(resp);
+            console.log(resp);
         }
 
         Object.keys(resp).forEach(function (U) {
@@ -39,7 +43,15 @@ var exec = require('child_process').exec,
                 console.log('## Found ' + resp[U].bad.length + ' bad resources in ' + U);
                 console.log(resp[U].bad);
             }
+            if (resp[U].status !== 'success') {
+                dead.push(U);
+            }
         });
+
+        if (dead.length) {
+            console.log('## ' +  dead.length + ' dead targets not tested!');
+            console.log(dead);
+        }
 
         console.log('### All ' + err + ' bad resources found!!');
         process.exit(err);
@@ -71,25 +83,16 @@ urls.forEach(function (U) {
     }
 
     exec(cmd + U, function(err, stdout, stderr) {
-        var match;
+        var match,
+            data = JSON.parse(stdout);
+
+        opts.verbose && console.log('- ' + U);
+        opts.debug && consoole.log(data);
 
         resp[U].out.push(stdout);
-
-        match = stdout.match(/good:(.+)/g);
-        if (match) {
-            match.forEach(function(M) {
-                resp[U].good.push(M.substr(5));
-            });
-        }
-        
-        match = stdout.match(/BAD: (.+)/g);
-        if (match) {
-            match.forEach(function(M) {
-                resp[U].bad.push(M.substr(5));
-            });
-        }
-
-        opts.verbose && console.log(stdout);
+        resp[U].bad = resp[U].bad.concat(data.bad);
+        resp[U].good = resp[U].bad.concat(data.good);
+        resp[U].stats = data.stats;
 
         done();
     });
