@@ -60,6 +60,35 @@ var exec = require('child_process').exec,
         console.log('### All ' + err + ' bad resources be found in ' + bad.length + ' urls !!');
         bad.length && console.log(bad);
         process.exit(err);
+    },
+
+    test = function (U) {
+        if (resp[U]) {
+            resp[U].err.push('Duplicate testing targets!');
+            return done();
+        }
+    
+        resp[U] = {err: [], out: [], good: [], bad: []};
+    
+        if (!U.match(/^https/)) {
+            resp[U].err.push('Testing on bad url or not https');
+            return done();
+        }
+    
+        exec(cmd + U, function(err, stdout, stderr) {
+            var match,
+                data = JSON.parse(stdout);
+    
+            opts.verbose && console.log('- ' + U);
+            opts.debug && console.log(data);
+    
+            resp[U].out.push(stdout);
+            resp[U].bad = resp[U].bad.concat(data.bad);
+            resp[U].good = resp[U].bad.concat(data.good);
+            resp[U].stats = data.stats;
+    
+            done();
+        });
     };
 
 if (opts.file) {
@@ -74,32 +103,4 @@ opts.argv.remain.length || urls.length || die();
 
 console.log('** All ' + urls.length + ' urls will be tested.');
 
-urls.forEach(function (U) {
-    if (resp[U]) {
-        resp[U].err.push('Duplicate testing targets!');
-        return done();
-    }
-
-    resp[U] = {err: [], out: [], good: [], bad: []};
-
-    if (!U.match(/^https/)) {
-        resp[U].err.push('Testing on bad url or not https');
-        return done();
-    }
-
-    exec(cmd + U, function(err, stdout, stderr) {
-        var match,
-            data = JSON.parse(stdout);
-
-        opts.verbose && console.log('- ' + U);
-        opts.debug && console.log(data);
-
-        resp[U].out.push(stdout);
-        resp[U].bad = resp[U].bad.concat(data.bad);
-        resp[U].good = resp[U].bad.concat(data.good);
-        resp[U].stats = data.stats;
-
-        done();
-    });
-});
-
+urls.forEach(test);
