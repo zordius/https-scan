@@ -8,7 +8,8 @@ var exec = require('child_process').exec,
         verbose: Boolean,
         debug: Boolean,
         file: String,
-        queue: Number
+        queue: Number,
+        retry: Boolean
     },
     opts = require('nopt')(optcfg),
     urls = opts.argv.remain,
@@ -69,16 +70,33 @@ var exec = require('child_process').exec,
         }
     
         exec(cmd + U, function(err, stdout, stderr) {
-            var match,
+            var data = null;
+
+            try {
                 data = JSON.parse(stdout);
+            } catch (e) {
+                if (rest[U].status) {
+                    return;
+                }
+
+                resp[U].status = 'crash';
+                resp[U].err.push(stderr);
+
+                if (opts.retry) {
+                    queue.push(U);
+                }
+            }
     
             opts.verbose && console.log('- ' + U);
             opts.debug && console.log(data);
     
             resp[U].out.push(stdout);
-            resp[U].bad = resp[U].bad.concat(data.bad);
-            resp[U].good = resp[U].bad.concat(data.good);
-            resp[U].stats = data.stats;
+
+            if (data) {
+                resp[U].bad = resp[U].bad.concat(data.bad);
+                resp[U].good = resp[U].bad.concat(data.good);
+                resp[U].stats = data.stats;
+            }
     
             next();
         });
