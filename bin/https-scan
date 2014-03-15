@@ -40,7 +40,9 @@ var exec = require('child_process').exec,
     },
 
     die = function (W) {
-        W && console.warn(W);
+        if (W) {
+            console.warn(W);
+        }
         console.warn('Usage: ' + process.argv[1] + ' [--' + Object.keys(optcfg).join('] [--') + '] [--] <url>...');
         process.exit(1);
     },
@@ -61,7 +63,9 @@ var exec = require('child_process').exec,
                 bad.push(U);
                 err += resp[U].bad.length;
                 console.log('## Found ' + resp[U].bad.length + ' bad resources in ' + U);
-                opts.verbose && console.log(resp[U].bad);
+                if (opts.verbose) {
+                    console.log(resp[U].bad);
+                }
             }
 
             if (resp[U].stats !== 'success') {
@@ -75,7 +79,9 @@ var exec = require('child_process').exec,
         }
 
         console.log('### All ' + err + ' bad resources be found in ' + bad.length + ' urls !!');
-        bad.length && console.log(bad);
+        if (bad.length) {
+            console.log(bad);
+        }
         process.exit(err);
     },
 
@@ -111,8 +117,10 @@ var exec = require('child_process').exec,
                     queue.push(U);
                 }
             }
-    
-            opts.slient || console.log('- ' + (resp[U].stats ? '(retry) ' : ('(' + data.stats + ') ')) + U);
+
+            if (!opts.slient) {
+                console.log('- ' + (resp[U].stats ? '(retry) ' : ('(' + data.stats + ') ')) + U);
+            }
     
             resp[U].out.push(stdout);
 
@@ -136,7 +144,9 @@ if (opts.file) {
     }
 }
 
-opts.argv.remain.length || urls.length || die();
+if (0 === opts.argv.remain.length + urls.length) {
+    die();
+}
 
 console.log('** All ' + urls.length + ' urls will be tested.');
 
