@@ -1,4 +1,4 @@
-https-scan
+https-scan [![Dependency Status](https://david-dm.org/zordius/https-scan.png)](https://david-dm.org/zordius/https-scan)
 ==========
 
 A https validation tool based on phantomjs. It can detect more dynamic loaded resources than static HTML analyze.
