@@ -28,7 +28,8 @@ var http = require('https'),
         unsafe: Boolean,
         dot: Boolean,
         verbose: Boolean,
-        useragent: String
+        useragent: String,
+        cookie: String
     },
     opts = require('nopt')(optcfg),
     oTotal = opts.total || 1,
@@ -68,6 +69,9 @@ var http = require('https'),
             req.headers = {};
             if (opts.useragent) {
                 req.headers['User-Agent'] = opts.useragent;
+            }
+            if (opts.cookie) {
+                req.headers['Cookie'] = opts.cookie;
             }
         }
 
