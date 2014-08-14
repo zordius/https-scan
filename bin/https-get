@@ -49,10 +49,9 @@ var http = require('https'),
     getUrl = function() {
         if (current >= oTotal) {
             if (concurrent == 0) {
-                console.log('Done!');
+                console.log('All ' + oTotal + ' requests made!');
                 process.exit(0);
             }
-            console.log('All ' + oTotal + ' requests made!');
             return;
         }
 
