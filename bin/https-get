@@ -1,0 +1,89 @@
+#!/usr/bin/env node                                                                                                          
+/*
+Copyrights for code authored by Yahoo! Inc. is licensed under the following
+terms:
+MIT License
+Copyright (c) 2014 Yahoo! Inc. All Rights Reserved.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+var http = require('https'),
+    optcfg = {
+        total: Number,
+        concurrent: Number,
+    },
+    opts = require('nopt')(optcfg),
+    oTotal = opts.total || 1,
+    oConcurrent = opts.concurrent || 1,
+    url = opts.argv.remain,
+    current = 0,
+    concurrent = 0,
+
+    die = function (W) {
+        if (W) {
+            console.warn(W);
+        }
+        console.warn('Usage: ' + process.argv[1] + ' [--' + Object.keys(optcfg).join(' N] [--') + ' N] <url>...');
+        process.exit(1);
+    },
+
+    getUrl = function() {
+        if (current >= oTotal) {
+            if (concurrent == 0) {
+                console.log('Done!');
+                process.exit(0);
+            }
+            console.log('All ' + oTotal + ' requests made!');
+            return;
+        }
+
+        if (concurrent >= oConcurrent) {
+            return;
+        }
+
+        concurrent++;
+        current++;
+
+        http.get(url[0], function(res) {
+            var pageData = '';
+            res.resume();
+            res.on('data', function (chunk) {
+                if (res.statusCode == 200) {
+                    pageData += chunk;
+                }
+            });
+ 
+            res.on('end', function() {
+                console.log('finished 1 req');
+                concurrent--;
+                getUrl();
+            });
+        }).on('error', function(e) {
+            console.log('ERROR!');
+            console.log(e);
+            concurrent--;
+            getUrl();
+        });
+
+        getUrl();
+    };
+
+if (url.length == 0) {
+    die();
+}
+
+getUrl();
