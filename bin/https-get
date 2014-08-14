@@ -25,7 +25,9 @@ var http = require('https'),
     optcfg = {
         total: Number,
         concurrent: Number,
-        unsafe: Boolean
+        unsafe: Boolean,
+        dot: Boolean,
+        verbose: Boolean
     },
     opts = require('nopt')(optcfg),
     oTotal = opts.total || 1,
@@ -75,13 +77,19 @@ var http = require('https'),
             });
  
             res.on('end', function() {
-                console.log('finished 1 req');
+                if (opts.dot) {
+                    process.stdout.write('.');
+                }
                 concurrent--;
                 getUrl();
             });
         }).on('error', function(e) {
-            console.log('ERROR!');
-            console.log(e);
+            if (opts.dot) {
+                process.stdout.write('E');
+            }
+            if (opts.verbose) {
+                console.log(e);
+            }
             concurrent--;
             getUrl();
         });
@@ -93,4 +101,5 @@ if (url.length == 0) {
     die();
 }
 
+console.log('Start to testin on ' + url[0]);
 getUrl();
