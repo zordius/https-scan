@@ -25,11 +25,13 @@ var http = require('https'),
     optcfg = {
         total: Number,
         concurrent: Number,
+        unsafe: Boolean
     },
     opts = require('nopt')(optcfg),
     oTotal = opts.total || 1,
     oConcurrent = opts.concurrent || 1,
     url = opts.argv.remain,
+    req,
     current = 0,
     concurrent = 0,
 
@@ -37,7 +39,7 @@ var http = require('https'),
         if (W) {
             console.warn(W);
         }
-        console.warn('Usage: ' + process.argv[1] + ' [--' + Object.keys(optcfg).join(' N] [--') + ' N] <url>...');
+        console.warn('Usage: ' + process.argv[1] + ' [--' + Object.keys(optcfg).join('] [--') + '] <url>...');
         process.exit(1);
     },
 
@@ -58,7 +60,12 @@ var http = require('https'),
         concurrent++;
         current++;
 
-        http.get(url[0], function(res) {
+        if (!req) {
+            req = require('url').parse(url[0]);
+            req.rejectUnauthorized = !opts.unsafe;
+        }
+
+        http.get(req, function(res) {
             var pageData = '';
             res.resume();
             res.on('data', function (chunk) {
