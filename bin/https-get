@@ -27,7 +27,8 @@ var http = require('https'),
         concurrent: Number,
         unsafe: Boolean,
         dot: Boolean,
-        verbose: Boolean
+        verbose: Boolean,
+        useragent: String
     },
     opts = require('nopt')(optcfg),
     oTotal = opts.total || 1,
@@ -65,6 +66,10 @@ var http = require('https'),
         if (!req) {
             req = require('url').parse(url[0]);
             req.rejectUnauthorized = !opts.unsafe;
+            req.headers = {};
+            if (opts.useragent) {
+                req.headers['User-Agent'] = opts.useragent;
+            }
         }
 
         http.get(req, function(res) {
